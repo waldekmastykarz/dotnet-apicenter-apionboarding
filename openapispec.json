@@ -1,0 +1,590 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "https://jsonplaceholder.typicode.com API",
+    "description": "https://jsonplaceholder.typicode.com API",
+    "version": "v1.0"
+  },
+  "servers": [
+    {
+      "url": "https://jsonplaceholder.typicode.com"
+    }
+  ],
+  "paths": {
+    "/posts": {
+      "description": "Provides operations to manage posts",
+      "options": {
+        "summary": "Options posts",
+        "operationId": "Options.posts",
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get posts",
+        "operationId": "Get.posts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Content-Type-Options": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "userId": {
+                        "type": "number"
+                      },
+                      "id": {
+                        "type": "number"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "body": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posts/{posts-id}/": {
+      "description": "Provides operations to manage posts",
+      "options": {
+        "summary": "Options posts",
+        "operationId": "Options.posts.{posts-id}.",
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get posts",
+        "operationId": "Get.posts.{posts-id}.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Content-Type-Options": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userId": {
+                      "type": "number"
+                    },
+                    "id": {
+                      "type": "number"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "posts-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/users/{users-id}/": {
+      "description": "Provides operations to manage users",
+      "options": {
+        "summary": "Options users",
+        "operationId": "Options.users.{users-id}.",
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get users",
+        "operationId": "Get.users.{users-id}.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Content-Type-Options": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "street": {
+                          "type": "string"
+                        },
+                        "suite": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "zipcode": {
+                          "type": "string"
+                        },
+                        "geo": {
+                          "type": "object",
+                          "properties": {
+                            "lat": {
+                              "type": "string"
+                            },
+                            "lng": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "catchPhrase": {
+                          "type": "string"
+                        },
+                        "bs": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "users-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "/posts/{posts-id}/comments": {
+      "description": "Provides operations to manage comments",
+      "options": {
+        "summary": "Options comments",
+        "operationId": "Options.posts.{posts-id}.comments",
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get comments",
+        "operationId": "Get.posts.{posts-id}.comments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Reporting-Endpoints": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Nel": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Limit": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Remaining": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Ratelimit-Reset": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Content-Type-Options": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-Cache-Status": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "CF-RAY": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "postId": {
+                        "type": "number"
+                      },
+                      "id": {
+                        "type": "number"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "body": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "posts-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "x-ms-generated-by": {
+    "toolName": "Dev Proxy",
+    "toolVersion": "0.17.0"
+  }
+}
