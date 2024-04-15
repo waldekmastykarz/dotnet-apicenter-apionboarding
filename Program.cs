@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Azure.Core;
 using Azure.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
@@ -28,6 +29,18 @@ var credential = new ChainedTokenCredential(
   new AzureDeveloperCliCredential()
 );
 string[] scopes = ["https://management.azure.com/.default"];
+
+// check if the user is signed-in. Stop if they're not
+try
+{
+  await credential.GetTokenAsync(new TokenRequestContext(scopes), CancellationToken.None);
+}
+catch (AuthenticationFailedException ex)
+{
+  Console.WriteLine($"Sign in to Azure before using this plugin. Original error: {ex.Message}");
+  return;
+}
+
 var authenticationHandler = new AuthenticationDelegatingHandler(credential, scopes)
 {
   InnerHandler = new HttpClientHandler()
@@ -240,7 +253,8 @@ var nowString = "" + DateTime.Now.ToString("yyyyMMddHHmmss");
 var title = $"New APIs discovered {nowString}";
 var payload = new
 {
-  properties = new {
+  properties = new
+  {
     title,
     description = newApisMessage,
     kind = "REST",
