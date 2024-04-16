@@ -1,0 +1,7 @@
+{
+  "subscriptionId": "cdae2297-7aa6-4195-bbb1-dcd89153cc72",
+  "resourceGroupName": "resource-group-name",
+  "serviceName": "apic-instance",
+  "workspaceName": "default",
+  "createApicEntryForNewApis": true
+}

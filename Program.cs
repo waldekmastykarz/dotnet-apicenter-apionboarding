@@ -7,6 +7,7 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using Microsoft.Extensions.Configuration;
 
 var jsonSerializerOptions = new JsonSerializerOptions
 {
@@ -15,11 +16,17 @@ var jsonSerializerOptions = new JsonSerializerOptions
 };
 
 // configurable via plugin settings
-var subscriptionId = "cdae2297-7aa6-4195-bbb1-dcd89153cc72";
-var resourceGroupName = "resource-group-name";
-var serviceName = "apic-instance";
-var workspaceName = "default";
-var createApicEntryForNewApis = true;
+var builder = new ConfigurationBuilder()
+  .SetBasePath(Directory.GetCurrentDirectory())
+  .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+IConfigurationRoot configuration = builder.Build();
+
+var subscriptionId = configuration["subscriptionId"];
+var resourceGroupName = configuration["resourceGroupName"];
+var serviceName = configuration["serviceName"];
+var workspaceName = configuration["workspaceName"];
+var createApicEntryForNewApis = bool.Parse(configuration?["createApicEntryForNewApis"] ?? "true");
 
 var credential = new ChainedTokenCredential(
   new VisualStudioCredential(),
@@ -72,7 +79,7 @@ var interceptedRequests = new List<Request>
     Method = "POST"
   }
 };
-var newApis = new List<string>();
+var newApis = new List<Tuple<string, string>>();
 // url > definition for easy lookup
 var apiDefinitions = new Dictionary<string, ApiDefinition>();
 
@@ -155,6 +162,11 @@ async Task EnsureApiDefinition(ApiDefinition apiDefinition)
   }
 }
 
+string MaxLength(string input, int maxLength)
+{
+  return input.Length <= maxLength ? input : input.Substring(0, maxLength);
+}
+
 var res = await httpClient.GetStringAsync($"https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}/workspaces/{workspaceName}/apis?api-version=2024-03-01");
 var apis = JsonSerializer.Deserialize<Collection<Api>>(res, jsonSerializerOptions);
 if (apis == null || !apis.Value.Any())
@@ -175,7 +187,7 @@ foreach (var request in interceptedRequests)
   var apiDefinition = apiDefinitions.FirstOrDefault(x => request.Url.Contains(x.Key)).Value;
   if (apiDefinition.Id is null)
   {
-    newApis.Add(request.Url);
+    newApis.Add(new(request.Method, request.Url));
     continue;
   }
 
@@ -183,7 +195,7 @@ foreach (var request in interceptedRequests)
 
   if (apiDefinition.Definition is null)
   {
-    newApis.Add(request.Url);
+    newApis.Add(new(request.Method, request.Url));
     continue;
   }
 
@@ -220,14 +232,14 @@ foreach (var request in interceptedRequests)
 
   if (pathItem is null)
   {
-    newApis.Add($"{request.Method} {request.Url}");
+    newApis.Add(new(request.Method, request.Url));
     continue;
   }
 
   var operation = pathItem.Operations.FirstOrDefault(x => x.Key.ToString().Equals(request.Method, StringComparison.OrdinalIgnoreCase)).Value;
   if (operation is null)
   {
-    newApis.Add($"{request.Method} {request.Url}");
+    newApis.Add(new(request.Method, request.Url));
     continue;
   }
 }
@@ -238,9 +250,16 @@ if (!newApis.Any())
   return;
 }
 
-var newApisMessage = $"New APIs discovered by Dev Proxy:{Environment.NewLine}{string.Join(Environment.NewLine, newApis)}";
+var apisPerHost = newApis.GroupBy(x => new Uri(x.Item2).Host);
 
-Console.WriteLine(newApisMessage);
+var newApisMessageChunks = new List<string>(["New APIs discovered by Dev Proxy", ""]);
+foreach (var apiPerHost in apisPerHost)
+{
+  newApisMessageChunks.Add($"{apiPerHost.Key}:");
+  newApisMessageChunks.AddRange(apiPerHost.Select(a => $"  {a.Item1} {a.Item2}"));
+}
+
+Console.WriteLine(string.Join(Environment.NewLine, newApisMessageChunks));
 if (!createApicEntryForNewApis)
 {
   return;
@@ -249,19 +268,36 @@ if (!createApicEntryForNewApis)
 Console.WriteLine();
 Console.WriteLine("Creating new API entries in API Center...");
 
-var nowString = "" + DateTime.Now.ToString("yyyyMMddHHmmss");
-var title = $"New APIs discovered {nowString}";
-var payload = new
+foreach (var apiPerHost in apisPerHost)
 {
-  properties = new
+  var host = apiPerHost.Key;
+  // trim to 50 chars which is max length for API name
+  var apiName = MaxLength($"new-{host.Replace(".", "-")}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}", 50);
+  Console.WriteLine(apiName);
+
+  var title = $"New APIs: {host}";
+  var description = new List<string>(["New APIs discovered by Dev Proxy", ""]);
+  description.AddRange(apiPerHost.Select(a => $"  {a.Item1} {a.Item2}").ToArray());
+  var payload = new
   {
-    title,
-    description = newApisMessage,
-    kind = "REST",
-    type = "rest"
+    properties = new
+    {
+      title,
+      description = string.Join(Environment.NewLine, description),
+      kind = "REST",
+      type = "rest"
+    }
+  };
+  var content = new StringContent(JsonSerializer.Serialize(payload, jsonSerializerOptions), Encoding.UTF8, "application/json");
+  var createRes = await httpClient.PutAsync($"https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}/workspaces/{workspaceName}/apis/{apiName}?api-version=2024-03-01", content);
+  if (createRes.IsSuccessStatusCode)
+  {
+    Console.WriteLine("API created successfully");
   }
-};
-var content = new StringContent(JsonSerializer.Serialize(payload, jsonSerializerOptions), Encoding.UTF8, "application/json");
-var createRes = await httpClient.PutAsync($"https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiCenter/services/{serviceName}/workspaces/{workspaceName}/apis/new-api-{nowString}?api-version=2024-03-01", content);
-var createResContent = await createRes.Content.ReadAsStringAsync();
-Console.WriteLine(createResContent);
+  else
+  {
+    Console.WriteLine("Failed to create API");
+  }
+  var createResContent = await createRes.Content.ReadAsStringAsync();
+  Console.WriteLine(createResContent);
+}
